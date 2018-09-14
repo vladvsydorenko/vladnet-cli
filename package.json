@@ -1,6 +1,6 @@
 {
   "name": "@vladnet/cli-vladnet",
-  "version": "1.0.0-a",
+  "version": "1.0.1-a",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "license": "MIT",
@@ -10,7 +10,7 @@
     "compile:watch": "webpack --watch"
   },
   "bin": {
-    "vladnet": "./dist/vladnet.js"
+    "vladnet": "./bin/vladnet.js"
   },
   "devDependencies": {
     "@types/argv": "^0.0.4",
