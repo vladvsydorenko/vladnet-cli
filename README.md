@@ -1,5 +1,4 @@
-# @vladnet/cli-infrastructure
+# @vladnet/cli-vladnet
 
-Actions:
+`vladnet` bin looking for `vladnet.json` to find actions.
 
- - init package
