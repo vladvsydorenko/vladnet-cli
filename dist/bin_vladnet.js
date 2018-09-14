@@ -599,18 +599,33 @@ var path = __webpack_require__(/*! path */ "path");
 var argvParser = __webpack_require__(/*! argv */ "./node_modules/argv/index.js");
 var loadActions_1 = __webpack_require__(/*! ./loadActions */ "./src/bin/loadActions.ts");
 var configPath = path.join(process.cwd(), "vladnet.json");
-try {
-    var config = JSON.parse(fs.readFileSync(configPath).toString());
-    var actions = loadActions_1.loadActions(config);
-    var command = process.argv[2];
-    var action = actions[command];
-    argvParser.option(action.options);
-    var result = argvParser.run(process.argv.slice(3));
-    action.run(result.options);
-}
-catch (err) {
-    console.error("Error reading config by path \"" + configPath + "\"", err.stack);
-}
+var read = function () {
+    try {
+        var config = JSON.parse(fs.readFileSync(configPath).toString());
+        var actions = loadActions_1.loadActions(config);
+        var command = process.argv[2];
+        if (!command) {
+            console.error("No action name passed");
+            return;
+        }
+        var action = actions[command];
+        if (!action) {
+            console.error("Action \"" + command + "\" not found");
+            return;
+        }
+        if (!Array.isArray(action.options) || typeof action.run !== "function") {
+            console.error("Loaded action \"" + command + "\" has wrong type, should have \"options\" and \"run\"");
+            return;
+        }
+        argvParser.option(action.options);
+        var result = argvParser.run(process.argv.slice(3));
+        action.run(result.options);
+    }
+    catch (err) {
+        console.error("Error reading config by path \"" + configPath + "\"", err.stack);
+    }
+};
+read();
 
 
 /***/ }),
