@@ -1,6 +1,6 @@
 {
   "name": "@vladnet/cli-vladnet",
-  "version": "1.0.2-a",
+  "version": "1.0.3-a",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "license": "MIT",
