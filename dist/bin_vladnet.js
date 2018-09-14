@@ -597,11 +597,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var fs = __webpack_require__(/*! fs */ "fs");
 var path = __webpack_require__(/*! path */ "path");
 var argvParser = __webpack_require__(/*! argv */ "./node_modules/argv/index.js");
-var helpers_1 = __webpack_require__(/*! ./helpers */ "./src/bin/helpers.ts");
+var loadActions_1 = __webpack_require__(/*! ./loadActions */ "./src/bin/loadActions.ts");
 var configPath = path.join(process.cwd(), "vladnet.json");
 try {
     var config = JSON.parse(fs.readFileSync(configPath).toString());
-    var actions = helpers_1.loadActions(config);
+    var actions = loadActions_1.loadActions(config);
     var command = process.argv[2];
     var action = actions[command];
     argvParser.option(action.options);
@@ -615,34 +615,27 @@ catch (err) {
 
 /***/ }),
 
-/***/ "./src/bin/helpers.ts":
-/*!****************************!*\
-  !*** ./src/bin/helpers.ts ***!
-  \****************************/
+/***/ "./src/bin/loadActions.ts":
+/*!********************************!*\
+  !*** ./src/bin/loadActions.ts ***!
+  \********************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var path = __webpack_require__(/*! path */ "path");
 var nativeRequire_1 = __webpack_require__(/*! ../nativeRequire */ "./src/nativeRequire.ts");
-exports.normalizeActionPaths = function (paths) {
-    return paths.map(function (value) {
-        if (value.charAt(0) === ".")
-            value = path.join(process.cwd(), value);
-        return value;
-    });
-};
+var normalizePaths_1 = __webpack_require__(/*! ./normalizePaths */ "./src/bin/normalizePaths.ts");
 exports.loadActions = function (config) {
-    var absoluteActionPaths = exports.normalizeActionPaths(config.actions);
+    var absoluteActionPaths = normalizePaths_1.normalizePaths(config.actions);
     var actions = absoluteActionPaths.reduce(function (acc, actionPath, i) {
         var loadedActions;
         try {
             loadedActions = nativeRequire_1.default(actionPath);
         }
         catch (err) {
-            console.error("[vladnet] Error while reading " + config.actions[i], err.stack);
+            console.error("[vladnet] Error while reading " + config.actions[i] + "\n", err.stack, "\n");
         }
         if (exports.loadActions) {
             Object
@@ -654,6 +647,28 @@ exports.loadActions = function (config) {
         return acc;
     }, {});
     return actions;
+};
+
+
+/***/ }),
+
+/***/ "./src/bin/normalizePaths.ts":
+/*!***********************************!*\
+  !*** ./src/bin/normalizePaths.ts ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var path = __webpack_require__(/*! path */ "path");
+exports.normalizePaths = function (paths) {
+    return paths.map(function (value) {
+        if (value.charAt(0) === ".")
+            value = path.join(process.cwd(), value);
+        return value;
+    });
 };
 
 

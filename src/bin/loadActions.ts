@@ -1,18 +1,10 @@
-import * as fs from "fs";
-import * as path from "path";
-import { ICLIConfig } from "./ICLIConfig";
 import nativeRequire from "../nativeRequire";
+import { ICLIConfig } from "./ICLIConfig";
 import { ICliAction } from "../ICLIAction";
-
-export const normalizeActionPaths = (paths: string[]) => {
-    return paths.map(value => {
-        if (value.charAt(0) === ".") value = path.join(process.cwd(), value);
-        return value;
-    });
-};
+import { normalizePaths } from "./normalizePaths";
 
 export const loadActions = (config: ICLIConfig) => {
-    const absoluteActionPaths = normalizeActionPaths(config.actions);
+    const absoluteActionPaths = normalizePaths(config.actions);
 
     const actions = absoluteActionPaths.reduce((acc, actionPath, i) => {
         let loadedActions: any;
@@ -21,7 +13,7 @@ export const loadActions = (config: ICLIConfig) => {
             loadedActions = nativeRequire(actionPath);
         }
         catch(err) {
-            console.error(`[vladnet] Error while reading ${config.actions[i]}`, err.stack);
+            console.error(`[vladnet] Error while reading ${config.actions[i]}\n`, err.stack, "\n");
         }
 
         if (loadActions) {
