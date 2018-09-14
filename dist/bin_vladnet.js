@@ -636,13 +636,21 @@ exports.normalizeActionPaths = function (paths) {
 };
 exports.loadActions = function (config) {
     var absoluteActionPaths = exports.normalizeActionPaths(config.actions);
-    var actions = absoluteActionPaths.reduce(function (acc, actionPath) {
-        var loadedActions = nativeRequire_1.default(actionPath);
-        Object
-            .keys(loadedActions.actions)
-            .forEach(function (key) {
-            acc[key] = loadedActions.actions[key];
-        });
+    var actions = absoluteActionPaths.reduce(function (acc, actionPath, i) {
+        var loadedActions;
+        try {
+            loadedActions = nativeRequire_1.default(actionPath);
+        }
+        catch (err) {
+            console.error("[vladnet] Error while reading " + config.actions[i], err.stack);
+        }
+        if (exports.loadActions) {
+            Object
+                .keys(loadedActions.actions)
+                .forEach(function (key) {
+                acc[key] = loadedActions.actions[key];
+            });
+        }
         return acc;
     }, {});
     return actions;
